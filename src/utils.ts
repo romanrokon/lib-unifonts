@@ -4,13 +4,18 @@ type fontMap = {
   [key: string]: string | undefined;
 };
 
-export const toFontMap = (xs: string[]): fontMap =>
-  fonts['serif.normal'].reduce((acc, key, index) => {
+export const toFontMap = (xs: string[]): fontMap => {
+  // @ts-ignore
+  const serifNormal = fonts['serif.normal'];
+  // @ts-ignore
+  const keys = (serifNormal.map ? serifNormal.map : serifNormal) as string[];
+  return keys.reduce((acc, key, index) => {
     if (xs[index]) {
       acc[key] = xs[index];
     }
     return acc;
   }, {});
+};
 
 export const strMap = (f: (c: string) => string, s = ''): string => {
   let res = '';
@@ -21,6 +26,9 @@ export const strMap = (f: (c: string) => string, s = ''): string => {
 };
 
 export const lookUp = (fontName: string, s = ''): string => {
-  const fontMap = toFontMap(fonts[fontName] || {});
+  const fontData = fonts[fontName];
+  // @ts-ignore
+  const map = fontData ? (fontData.map ? fontData.map : fontData) : [];
+  const fontMap = toFontMap(map || {});
   return strMap(c => (fontMap[c] ? fontMap[c] : c), s);
 };

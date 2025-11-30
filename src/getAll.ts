@@ -4,6 +4,7 @@ import { lookUp } from './utils';
 export interface IFont {
   name: string;
   value: string;
+  category: string;
 }
 
 export type TFonts = Array<IFont>;
@@ -17,8 +18,10 @@ export default function getAll(string: string): TFonts {
 
   for (const name of iterable) {
     const value = lookUp(name, string);
+    // @ts-ignore
+    const category = fonts[name].category || 'Other';
 
-    result.push({ name, value });
+    result.push({ name, value, category });
   }
 
   return result;

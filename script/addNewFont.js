@@ -8,8 +8,10 @@ const { getCleanName, getByProduct } = require('./utils.script.js');
 const input = fs.readFileSync(path.join(__dirname, 'input'), 'utf-8');
 
 let name;
+let category = 'Other';
 let newCharsArray;
 const nameIdentifier = 'name: ';
+const categoryIdentifier = 'category: ';
 const charsLength = 62;
 
 if (input === '') {
@@ -31,6 +33,11 @@ input
       return;
     }
 
+    if (line.includes(categoryIdentifier)) {
+      category = line.replace(categoryIdentifier, '').replace(/\r/, '');
+      return;
+    }
+
     newCharsArray = line.split(/\s/);
   });
 
@@ -44,22 +51,26 @@ if (newCharsArray.length !== charsLength) {
   );
 }
 
-
 if (fonts[name]) {
   throw new Error(`A font with the name "${name}" already exists.`);
 }
 
 // add the new property
-fonts[name] = newCharsArray;
+fonts[name] = {
+  category,
+  map: newCharsArray,
+};
 
 try {
   fs.writeFileSync(
     path.join(__dirname, '../src/fonts.json'),
-    JSON.stringify(fonts),
+    JSON.stringify(fonts, null, 2),
     'utf-8'
   );
 
-  console.log(`New font "${name}" successfully added in fonts.json`);
+  console.log(
+    `New font "${name}" successfully added in fonts.json with category "${category}"`
+  );
 
   fs.truncateSync(path.join(__dirname, 'input'), 0);
 
