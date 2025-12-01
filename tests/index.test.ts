@@ -80,6 +80,7 @@ import {
   squiggle_symbol_6,
   symbolic,
   morse_code,
+  atbash_cipher,
 } from '../src';
 
 const unTouchStr = '我爱你';
@@ -573,3 +574,9 @@ test('morse_code', () => {
     '.- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --.. .- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --.. ----- .---- ..--- ...-- ....- ..... -.... --... ---.. ----. 我爱你'
   );
 });
+test('atbash_cipher', () => {
+  expect(atbash_cipher(origin)).toEqual(
+    'ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba0123456789我爱你'
+  );
+});
+

@@ -199,3 +199,5 @@ export const squiggle_symbol_6 = (s: string) => lookUp('squiggle_symbol_6', s);
 export const symbolic = (s: string) => lookUp('symbolic', s);
 
 export const morse_code = (s: string) => lookUp('morse_code', s);
+export const atbash_cipher = (s: string) => lookUp('atbash_cipher', s);
+
