@@ -201,3 +201,6 @@ export const symbolic = (s: string) => lookUp('symbolic', s);
 export const morse_code = (s: string) => lookUp('morse_code', s);
 export const atbash_cipher = (s: string) => lookUp('atbash_cipher', s);
 
+export * from './decoder';
+
+
