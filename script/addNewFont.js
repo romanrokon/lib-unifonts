@@ -3,7 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const fonts = require('../src/fonts.json');
-const { getCleanName, getByProduct } = require('./utils.script.js');
+const {
+  getCleanName,
+  getExportStatement,
+  getTestCase,
+} = require('./utils.script.js');
 
 const input = fs.readFileSync(path.join(__dirname, 'input'), 'utf-8');
 
@@ -76,15 +80,25 @@ try {
 
   console.log('Input file cleared');
 
+  // Append export statement to src/index.ts
   fs.writeFileSync(
-    path.join(__dirname, './byproduct'),
-    getByProduct(name, newCharsArray),
+    path.join(__dirname, '../src/index.ts'),
+    getExportStatement(name),
     {
       flag: 'a+',
     }
   );
+  console.log(`Export statement for "${name}" appended to src/index.ts`);
 
-  console.log('Unit test for new font appended in the byproduct file');
+  // Append test case to tests/index.test.ts
+  fs.writeFileSync(
+    path.join(__dirname, '../tests/index.test.ts'),
+    getTestCase(name, newCharsArray),
+    {
+      flag: 'a+',
+    }
+  );
+  console.log(`Test case for "${name}" appended to tests/index.test.ts`);
 } catch (error) {
   throw new Error(error);
 }

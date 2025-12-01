@@ -79,6 +79,7 @@ import {
   squiggle_symbol_5,
   squiggle_symbol_6,
   symbolic,
+  morse_code,
 } from '../src';
 
 const unTouchStr = '我爱你';
@@ -564,5 +565,11 @@ test('squiggle_symbol_6', () => {
 test('symbolic', () => {
   expect(symbolic(origin)).toEqual(
     '₳฿₵ĐɆ₣₲ⱧłJ₭Ⱡ₥₦Ø₱QⱤ₴₮ɄV₩ӾɎⱫ₳฿₵ĐɆ₣₲ⱧłJ₭Ⱡ₥₦Ø₱QⱤ₴₮ɄV₩ӾɎⱫ0123456789我爱你'
+  );
+});
+
+test('morse_code', () => {
+  expect(morse_code(origin)).toEqual(
+    '.- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --.. .- -... -.-. -.. . ..-. --. .... .. .--- -.- .-.. -- -. --- .--. --.- .-. ... - ..- ...- .-- -..- -.-- --.. ----- .---- ..--- ...-- ....- ..... -.... --... ---.. ----. 我爱你'
   );
 });
