@@ -16,7 +16,7 @@ const fontStyleHelper = (
   options: { fontStyle: fontStyle } = { fontStyle: 'normal' }
 ) => {
   const suffix = fontStyleMap[options.fontStyle] ? options.fontStyle : 'normal';
-  const fontName = `${prefix}.${suffix}`;
+  const fontName = `${prefix}_${suffix}`;
   return lookUp(fontName, s);
 };
 
@@ -26,14 +26,14 @@ const scriptHelper = (
   options: { fontStyle: 'normal' | 'bold' } = { fontStyle: 'normal' }
 ) => {
   const suffix = options.fontStyle === 'bold' ? 'bold' : 'normal';
-  return lookUp(`${prefix}.${suffix}`, s);
+  return lookUp(`${prefix}_${suffix}`, s);
 };
 
 export const serif = (s?: string, options?: { fontStyle: fontStyle }) =>
   fontStyleHelper(s, 'serif', options);
 
 export const sansSerif = (s?: string, options?: { fontStyle: fontStyle }) =>
-  fontStyleHelper(s, 'sans-serif', options);
+  fontStyleHelper(s, 'sans_serif', options);
 
 export const script = (
   s: string,
@@ -45,9 +45,9 @@ export const fraktur = (
   options: { fontStyle: 'normal' | 'bold' } = { fontStyle: 'normal' }
 ) => scriptHelper(s, 'fraktur', options);
 
-export const monospace = (s: string) => lookUp('monospace.normal', s);
+export const monospace = (s: string) => lookUp('monospace_normal', s);
 
-export const double_struck = (s: string) => lookUp('double_struck.bold', s);
+export const double_struck = (s: string) => lookUp('double_struck_bold', s);
 
 export const circle = (s: string) => lookUp('circle', s);
 
@@ -75,7 +75,7 @@ export const flipped = (s: string) => lookUp('flipped', s);
 
 export const flipped_reverse = (s: string) => lookUp('flipped_reverse', s);
 
-export const just_reversed = (s: string) => lookUp('just_reversed', s);
+export const just_reversed = (s: string) => lookUp('atbash_cipher', s);
 
 export const superscript = (s: string) => lookUp('superscript', s);
 
@@ -292,8 +292,10 @@ export const manga = (s: string) => lookUp('manga', s);
 
 export const rune = (s: string) => lookUp('rune', s);
 
-export const russian = (s: string) => lookUp('russian', s);
+export const russian = (s: string) => lookUp('russian_way', s);
 
-export const full_width = (s: string) => lookUp('full_width', s);
+export const full_width = (s: string) => lookUp('wide', s);
+
+
 
 

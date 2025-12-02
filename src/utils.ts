@@ -3,7 +3,6 @@ import fonts from './fonts.json';
 type fontMap = {
   [key: string]: string | undefined;
 };
-
 export const toFontMap = (xs: string[]): fontMap => {
   // @ts-ignore
   const serifNormal = fonts['serif_normal'];
