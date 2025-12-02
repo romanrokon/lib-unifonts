@@ -3,102 +3,103 @@
 const fs = require('fs');
 const path = require('path');
 const fonts = require('../src/fonts.json');
-const {
-  getCleanName,
-  getExportStatement,
-  getTestCase,
-} = require('./utils.script.js');
+const { getExportStatement, getTestCase } = require('./utils.script.js');
 
-const input = fs.readFileSync(path.join(__dirname, 'input'), 'utf-8');
+const externalFontsPath = path.join(__dirname, 'external_fonts.json');
 
-let name;
-let category = 'Other';
-let newCharsArray;
-const nameIdentifier = 'name: ';
-const categoryIdentifier = 'category: ';
-const charsLength = 62;
-
-if (input === '') {
-  throw new Error('./script/input is empty! Read ./script/instructions.md\n');
-}
-
-if (!input.includes(nameIdentifier)) {
+if (!fs.existsSync(externalFontsPath)) {
   throw new Error(
-    'Font name not specified in input file! Read ./script/instructions.md\n'
+    'external_fonts.json not found! Read ./script/instructions.md\n'
   );
-}
-
-input
-  .trim()
-  .split(/\n/)
-  .map(line => {
-    if (line.includes(nameIdentifier)) {
-      name = line.replace(nameIdentifier, '').replace(/\r/, '');
-      return;
-    }
-
-    if (line.includes(categoryIdentifier)) {
-      category = line.replace(categoryIdentifier, '').replace(/\r/, '');
-      return;
-    }
-
-    newCharsArray = line.split(/\s/);
-  });
-
-if (newCharsArray.length !== charsLength) {
-  throw new Error(
-    `Expected new characters length to be ${charsLength}, instead got ${newCharsArray.length}!
-       Look for extra spaces between characters
-
-       ${newCharsArray}
-    `
-  );
-}
-
-if (fonts[name]) {
-  throw new Error(`A font with the name "${name}" already exists.`);
-}
-
-// add the new property
-fonts[name] = {
-  category,
-  map: newCharsArray,
+  if (lower.includes('italic')) return 'Classic';
+  if (lower.includes('bubble') || lower.includes('circled')) return 'Bubble';
+  if (lower.includes('square') || lower.includes('box')) return 'Funky';
+  if (lower.includes('gothic') || lower.includes('fraktur')) return 'Gothic';
+  if (lower.includes('mono')) return 'Retro';
+  if (lower.includes('math')) return 'Classic';
+  if (lower.includes('secret') || lower.includes('cipher') || lower.includes('code')) return 'Secret';
+  return 'Funky';
 };
 
-try {
-  fs.writeFileSync(
-    path.join(__dirname, '../src/fonts.json'),
-    JSON.stringify(fonts, null, 2),
-    'utf-8'
-  );
+const toArray = (input) => {
+  if (Array.isArray(input)) return input;
+  if (typeof input === 'string') return [...input];
+  return [];
+};
 
-  console.log(
-    `New font "${name}" successfully added in fonts.json with category "${category}"`
-  );
+let addedCount = 0;
 
-  fs.truncateSync(path.join(__dirname, 'input'), 0);
+externalFonts.forEach(fontData => {
+  const name = getCleanName(fontData.fontName);
+  const category = getCategory(fontData.fontName);
 
-  console.log('Input file cleared');
+  let newCharsArray = [
+    ...toArray(fontData.fontUpper),
+    ...toArray(fontData.fontLower),
+    ...(fontData.fontDigits ? toArray(fontData.fontDigits) : defaultDigits),
+  ];
 
-  // Append export statement to src/index.ts
-  fs.writeFileSync(
-    path.join(__dirname, '../src/index.ts'),
-    getExportStatement(name),
-    {
-      flag: 'a+',
-    }
-  );
-  console.log(`Export statement for "${name}" appended to src/index.ts`);
+  const charsLength = 62;
 
-  // Append test case to tests/index.test.ts
-  fs.writeFileSync(
-    path.join(__dirname, '../tests/index.test.ts'),
-    getTestCase(name, newCharsArray),
-    {
-      flag: 'a+',
-    }
-  );
-  console.log(`Test case for "${name}" appended to tests/index.test.ts`);
-} catch (error) {
-  throw new Error(error);
+  if (newCharsArray.length !== charsLength) {
+    console.warn(
+      `Expected new characters length to be ${charsLength}, instead got ${newCharsArray.length} for ${name}! Skipping.`
+    );
+    return;
+  }
+
+  if (fonts[name]) {
+    console.warn(`A font with the name "${name}" already exists. Skipping.`);
+    return;
+  }
+
+  // add the new property
+  fonts[name] = {
+    category,
+    map: newCharsArray,
+  };
+
+  try {
+    // Append export statement to src/index.ts
+    fs.writeFileSync(
+      path.join(__dirname, '../src/index.ts'),
+      getExportStatement(name),
+      {
+        flag: 'a+',
+      }
+    );
+    console.log(`Export statement for "${name}" appended to src/index.ts`);
+
+    // Append test case to tests/index.test.ts
+    fs.writeFileSync(
+      path.join(__dirname, '../tests/index.test.ts'),
+      getTestCase(name, newCharsArray),
+      {
+        flag: 'a+',
+      }
+    );
+    console.log(`Test case for "${name}" appended to tests/index.test.ts`);
+
+    console.log(
+      `New font "${name}" successfully added in fonts.json with category "${category}"`
+    );
+    addedCount++;
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+if (addedCount > 0) {
+  try {
+    fs.writeFileSync(
+      path.join(__dirname, '../src/fonts.json'),
+      JSON.stringify(fonts, null, 2),
+      'utf-8'
+    );
+    console.log(`\nSuccessfully added ${addedCount} new fonts to fonts.json`);
+  } catch (error) {
+    throw new Error(error);
+  }
+} else {
+  console.log('\nNo new fonts added.');
 }

@@ -6,7 +6,7 @@ type fontMap = {
 
 export const toFontMap = (xs: string[]): fontMap => {
   // @ts-ignore
-  const serifNormal = fonts['serif.normal'];
+  const serifNormal = fonts['serif_normal'];
   // @ts-ignore
   const keys = (serifNormal.map ? serifNormal.map : serifNormal) as string[];
   return keys.reduce((acc, key, index) => {

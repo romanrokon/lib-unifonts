@@ -203,4 +203,97 @@ export const atbash_cipher = (s: string) => lookUp('atbash_cipher', s);
 
 export * from './decoder';
 
+export const serif_normal = (s: string) => lookUp('serif_normal', s);
+
+export const serif_bold = (s: string) => lookUp('serif_bold', s);
+
+export const serif_italic = (s: string) => lookUp('serif_italic', s);
+
+export const serif_bold_italic = (s: string) => lookUp('serif_bold_italic', s);
+
+export const monospace_normal = (s: string) => lookUp('monospace_normal', s);
+
+export const sans_serif_normal = (s: string) => lookUp('sans_serif_normal', s);
+
+export const sans_serif_bold = (s: string) => lookUp('sans_serif_bold', s);
+
+export const sans_serif_italic = (s: string) => lookUp('sans_serif_italic', s);
+
+export const sans_serif_bold_italic = (s: string) =>
+  lookUp('sans_serif_bold_italic', s);
+
+export const double_struck_bold = (s: string) =>
+  lookUp('double_struck_bold', s);
+
+export const script_normal = (s: string) => lookUp('script_normal', s);
+
+export const script_bold = (s: string) => lookUp('script_bold', s);
+
+export const fraktur_normal = (s: string) => lookUp('fraktur_normal', s);
+
+export const fraktur_bold = (s: string) => lookUp('fraktur_bold', s);
+
+export const bubble_black = (s: string) => lookUp('bubble_black', s);
+
+export const parenthesis = (s: string) => lookUp('parenthesis', s);
+
+export const math_bold = (s: string) => lookUp('math_bold', s);
+
+export const math_italic = (s: string) => lookUp('math_italic', s);
+
+export const math_sans = (s: string) => lookUp('math_sans', s);
+
+export const math_sans_italic = (s: string) => lookUp('math_sans_italic', s);
+
+export const math_sans_bold = (s: string) => lookUp('math_sans_bold', s);
+
+export const math_sans_bold_italic = (s: string) =>
+  lookUp('math_sans_bold_italic', s);
+
+export const japanese = (s: string) => lookUp('japanese', s);
+
+export const arabic = (s: string) => lookUp('arabic', s);
+
+export const squared = (s: string) => lookUp('squared', s);
+
+export const funky = (s: string) => lookUp('funky', s);
+
+export const acute = (s: string) => lookUp('acute', s);
+
+export const rock_dots = (s: string) => lookUp('rock_dots', s);
+
+export const stroked = (s: string) => lookUp('stroked', s);
+
+export const inverted = (s: string) => lookUp('inverted', s);
+
+export const leet_extreme = (s: string) => lookUp('leet_extreme', s);
+
+export const heavy = (s: string) => lookUp('heavy', s);
+
+export const accent = (s: string) => lookUp('accent', s);
+
+export const linear = (s: string) => lookUp('linear', s);
+
+export const japanese_script = (s: string) => lookUp('japanese_script', s);
+
+export const box_lines = (s: string) => lookUp('box_lines', s);
+
+export const bent = (s: string) => lookUp('bent', s);
+
+export const side_squiggles = (s: string) => lookUp('side_squiggles', s);
+
+export const top_squiggles = (s: string) => lookUp('top_squiggles', s);
+
+export const comic = (s: string) => lookUp('comic', s);
+
+export const andalusia = (s: string) => lookUp('andalusia', s);
+
+export const manga = (s: string) => lookUp('manga', s);
+
+export const rune = (s: string) => lookUp('rune', s);
+
+export const russian = (s: string) => lookUp('russian', s);
+
+export const full_width = (s: string) => lookUp('full_width', s);
+
 

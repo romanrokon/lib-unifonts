@@ -1,35 +1,35 @@
 # Instructions for creating new font
 
-- Input file must contain the font name and alphanumeric characters in the following format:
+1. Open `script/external_fonts.json`.
+2. Add a new font object to the array in the following format:
 
-```txt
-name: [font_name]
-[A-Z][a-z][0-1]
+```json
+{
+    "fontName": "MyNewFont",
+    "fontLower": "ⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
+    "fontUpper": "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
+    "fontDigits": "⓪①②③④⑤⑥⑦⑧⑨"
+}
 ```
 
-### example:
+- `fontName`: The name of the font (CamelCase or Title Case). It will be converted to snake_case for the key.
+- `fontLower`: String of 26 lowercase characters.
+- `fontUpper`: String of 26 uppercase characters.
+- `fontDigits`: String of 10 digits (optional, defaults to 0-9 if empty).
 
-```
-name: asian_script
+3. Run the script:
 
-卂 乃 匚 ᗪ 乇 千 Ꮆ 卄 丨 ﾌ Ҝ ㄥ 爪 几 ㄖ 卩 Ɋ 尺 丂 ㄒ ㄩ ᐯ 山 乂 ㄚ 乙 卂 乃 匚 ᗪ 乇 千 Ꮆ 卄 丨 ﾌ Ҝ ㄥ 爪 几 ㄖ 卩 Ɋ 尺 丂 ㄒ ㄩ ᐯ 山 乂 ㄚ 乙 0 1 2 3 4 5 6 7 8 9
-```
-
-Nothing else just exact two line. One line for name one line for characters. An extra line possible between them like above!
-
-- name must be variable friendly & snake cased not camel cased
-- Fonts characters must be separated by a space.
-
-### Then run the script with:
-
-```sh
-yarn addNewFont
+```bash
+npm run add-font
 ```
 
-After a successful run,
+**What happens next:**
+- The script reads `external_fonts.json`.
+- It checks for duplicates in `src/fonts.json`.
+- If the font is new:
+    - It appends the font to `src/fonts.json`.
+    - It appends an export statement to `src/index.ts`.
+    - It appends a test case to `tests/index.test.ts`.
+- It logs the results.
 
-- input file will be cleared
-- a new json property will get pushed in fonts.json
-- appropriate function & unit test for the new font will be created in the byproduct file. (saves you lot of time!)
-
-Any required tweaks/fix for the new property must be done manually.
+**Note:** Existing fonts in `external_fonts.json` are skipped, so you can keep the history there.

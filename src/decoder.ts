@@ -1,6 +1,6 @@
 import fonts from './fonts.json';
 
-const ALPHABET = fonts['serif.normal'].map;
+const ALPHABET = fonts['serif_normal'].map;
 
 const getReverseMap = (fontName: string): Record<string, string> => {
   // @ts-ignore
@@ -84,4 +84,5 @@ export const detectCipher = (
 
   return null;
 };
+
 
