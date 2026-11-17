@@ -38,18 +38,18 @@ test('banner LO has 5 rows with a BLANK gap between glyphs', () => {
 
 test('emoji fill uses only the fill and its background', () => {
   const output = emojiLetters('L', '🔥');
-  const stripped = output.split('🔥').join('').split('\n').join('').split('🤍').join('');
+  const stripped = output.split('🔥').join('').split('\n').join('').split('▫️').join('');
 
   expect(output).toContain('🔥');
-  expect(output).toContain('🤍');
+  expect(output).toContain('▫️');
   expect(stripped).toBe('');
 });
 
 test('light fill gets a dark background', () => {
   const output = emojiLetters('L', '🤍');
 
-  expect(output).toContain('🖤');
-  expect(output).not.toContain('🤍🖤🤍');
+  expect(output).toContain('▪️');
+  expect(output).not.toContain('▫️');
 });
 
 test('emoji banner rows have equal grapheme count', () => {

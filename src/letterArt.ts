@@ -3,13 +3,13 @@
 // @ AI Context: emoji fills use a visible background from pickBackground (🤍, or 🖤 when the fill is light) because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
 
 export const BLANK = '　';
-export const EMOJI_BLANK = '🤍';
+export const EMOJI_BLANK = '▫️';
 
 type Fill = 'self' | { emoji: string };
 
 export const EMOJI_FILLS = ['❤️', '🔥', '⭐', '🌸', '💀', '✨', '🍀', '💜'];
 
-const LIGHT_FILLS = ['🤍', '⬜', '☁️', '🩶', '💀', '👻'];
+const LIGHT_FILLS = ['▫️', '🤍', '⬜', '☁️', '🩶', '💀', '👻'];
 const HEART_EMOJI = '❤️';
 const GLYPH_SIZE = 5;
 
@@ -93,7 +93,7 @@ export function firstEmoji(s: string): string | undefined {
 }
 
 export function pickBackground(fill: string): string {
-  return LIGHT_FILLS.indexOf(fill) !== -1 ? '🖤' : EMOJI_BLANK;
+  return LIGHT_FILLS.indexOf(fill) !== -1 ? '▪️' : EMOJI_BLANK;
 }
 
 type Shape = { kind: 'glyph'; key: string } | { kind: 'space' } | { kind: 'other' };
