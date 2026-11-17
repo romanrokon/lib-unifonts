@@ -1,9 +1,9 @@
 // @ AI Context: every cell is a fullwidth char (charCode + 0xFEE0) or U+3000, so all cells have equal
 // width even in proportional fonts, and U+3000 is not collapsed as whitespace by Instagram/WhatsApp.
-// EMOJI_BLANK is a separate constant because emoji glyphs render wider than 1em; tune it independently.
+// @ AI Context: EMOJI_BLANK is a visible 🤍 because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
 
 export const BLANK = '　';
-export const EMOJI_BLANK = '　';
+export const EMOJI_BLANK = '🤍';
 
 type Fill = 'self' | 'heart';
 
@@ -129,7 +129,7 @@ function blankFor(cell: string): string {
 }
 
 function isBlankCell(cell: string): boolean {
-  return cell === BLANK || cell === EMOJI_BLANK;
+  return cell === BLANK;
 }
 
 function renderCells(g: string, fill: Fill): string[][] {
@@ -223,6 +223,7 @@ export function stacked(s: string, fill: Fill): string {
 }
 
 export function banner(s: string, fill: Fill): string {
+  const gap = fill === 'heart' ? EMOJI_BLANK : BLANK;
   const tokens = tokenize(s);
 
   if (tokens.length === 0) {
@@ -238,12 +239,12 @@ export function banner(s: string, fill: Fill): string {
   tokens.forEach((token, index) => {
     const columns =
       token.kind === 'space'
-        ? rows.map(() => new Array(SPACE_WIDTH).fill(BLANK))
+        ? rows.map(() => new Array(SPACE_WIDTH).fill(gap))
         : renderCells(token.g, fill);
 
     rows.forEach((row, rowIndex) => {
       if (index > 0) {
-        row.push(BLANK);
+        row.push(gap);
       }
 
       columns[rowIndex].forEach(cell => row.push(cell));
