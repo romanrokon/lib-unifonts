@@ -1,12 +1,15 @@
 // @ AI Context: every cell is a fullwidth char (charCode + 0xFEE0) or U+3000, so all cells have equal
 // width even in proportional fonts, and U+3000 is not collapsed as whitespace by Instagram/WhatsApp.
-// @ AI Context: EMOJI_BLANK is a visible 🤍 because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
+// @ AI Context: emoji fills use a visible background from pickBackground (🤍, or 🖤 when the fill is light) because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
 
 export const BLANK = '　';
 export const EMOJI_BLANK = '🤍';
 
-type Fill = 'self' | 'heart';
+type Fill = 'self' | { emoji: string };
 
+export const EMOJI_FILLS = ['❤️', '🔥', '⭐', '🌸', '💀', '✨', '🍀', '💜'];
+
+const LIGHT_FILLS = ['🤍', '⬜', '☁️', '🩶', '💀', '👻'];
 const HEART_EMOJI = '❤️';
 const GLYPH_SIZE = 5;
 const SPACE_WIDTH = 3;
@@ -84,6 +87,16 @@ export function isEmoji(g: string): boolean {
   return new RegExp(EMOJI_PATTERN, 'u').test(g);
 }
 
+export function firstEmoji(s: string): string | undefined {
+  const found = splitGraphemes(s).filter(isEmoji)[0];
+
+  return found === '❤' ? HEART_EMOJI : found;
+}
+
+export function pickBackground(fill: string): string {
+  return LIGHT_FILLS.indexOf(fill) !== -1 ? '🖤' : EMOJI_BLANK;
+}
+
 type Shape = { kind: 'glyph'; key: string } | { kind: 'space' } | { kind: 'other' };
 
 function shapeFor(g: string): Shape {
@@ -109,8 +122,8 @@ function shapeFor(g: string): Shape {
 }
 
 function fillCell(g: string, fill: Fill): string {
-  if (fill === 'heart') {
-    return HEART_EMOJI;
+  if (fill !== 'self') {
+    return fill.emoji;
   }
 
   if (ALPHANUMERIC_PATTERN.test(g)) {
@@ -124,7 +137,11 @@ function fillCell(g: string, fill: Fill): string {
   return g;
 }
 
-function blankFor(cell: string): string {
+function blankFor(cell: string, fill: Fill): string {
+  if (fill !== 'self') {
+    return pickBackground(fill.emoji);
+  }
+
   return isEmoji(cell) ? EMOJI_BLANK : BLANK;
 }
 
@@ -137,7 +154,7 @@ function renderCells(g: string, fill: Fill): string[][] {
 
   if (shape.kind === 'glyph') {
     const cell = fillCell(g, fill);
-    const blank = blankFor(cell);
+    const blank = blankFor(cell, fill);
 
     return GLYPHS[shape.key].map(row =>
       row.split('').map(mark => (mark === '#' ? cell : blank))
@@ -223,7 +240,7 @@ export function stacked(s: string, fill: Fill): string {
 }
 
 export function banner(s: string, fill: Fill): string {
-  const gap = fill === 'heart' ? EMOJI_BLANK : BLANK;
+  const gap = fill === 'self' ? BLANK : pickBackground(fill.emoji);
   const tokens = tokenize(s);
 
   if (tokens.length === 0) {
@@ -258,13 +275,15 @@ export const bigLetters = (s: string) => stacked(s, 'self');
 
 export const bigLettersBanner = (s: string) => banner(s, 'self');
 
-export const heartLetters = (s: string) => stacked(s, 'heart');
+export const emojiLetters = (s: string, fill = '❤️') =>
+  stacked(s, { emoji: fill });
 
-export const heartLettersBanner = (s: string) => banner(s, 'heart');
+export const emojiLettersBanner = (s: string, fill = '❤️') =>
+  banner(s, { emoji: fill });
 
 export const LETTER_ART_FONTS: { name: string; fn: (s: string) => string }[] = [
   { name: 'big_letters', fn: bigLetters },
   { name: 'big_letters_banner', fn: bigLettersBanner },
-  { name: 'heart_letters', fn: heartLetters },
-  { name: 'heart_letters_banner', fn: heartLettersBanner },
+  { name: 'emoji_letters', fn: s => emojiLetters(s) },
+  { name: 'emoji_letters_banner', fn: s => emojiLettersBanner(s) },
 ];

@@ -1,6 +1,7 @@
 import fonts from './fonts.json';
 import { lookUp } from './utils';
 import { LETTER_ART_FONTS } from './letterArt';
+import { FRAMES, frameText } from './frames';
 
 export interface IFont {
   name: string;
@@ -28,6 +29,12 @@ export default function getAll(string: string): TFonts {
   LETTER_ART_FONTS.forEach(f =>
     result.push({ name: f.name, value: f.fn(string), category: 'Art' })
   );
+
+  result.push({
+    name: 'frames',
+    value: frameText(string, FRAMES[0].id),
+    category: 'Art',
+  });
 
   return result;
 }

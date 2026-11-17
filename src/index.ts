@@ -206,12 +206,19 @@ export * from './decoder';
 export {
   bigLetters,
   bigLettersBanner,
-  heartLetters,
-  heartLettersBanner,
+  emojiLetters,
+  emojiLettersBanner,
+  EMOJI_FILLS,
+  pickBackground,
+  firstEmoji,
+  splitGraphemes,
+  isEmoji,
   LETTER_ART_FONTS,
   BLANK,
   EMOJI_BLANK,
 } from './letterArt';
+
+export { FRAMES, frameText, Frame } from './frames';
 
 export const serif_normal = (s: string) => lookUp('serif_normal', s);
 

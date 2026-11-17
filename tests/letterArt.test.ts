@@ -1,10 +1,11 @@
 import {
   bigLetters,
   bigLettersBanner,
-  heartLetters,
-  heartLettersBanner,
+  emojiLetters,
+  emojiLettersBanner,
+  firstEmoji,
+  splitGraphemes,
   BLANK,
-  EMOJI_BLANK,
   LETTER_ART_FONTS,
   getAll,
 } from '../src';
@@ -35,21 +36,34 @@ test('banner LO has 5 rows with a BLANK gap between glyphs', () => {
   expect(rows[0]).toBe('Ｌ' + BLANK.repeat(4) + BLANK + BLANK + 'ＯＯＯ');
 });
 
-test('heart fill uses only hearts and blanks', () => {
-  [heartLetters('AB1'), heartLettersBanner('AB1')].forEach(output => {
-    const stripped = output
-      .split(HEART)
-      .join('')
-      .split('\n')
-      .join('')
-      .split(BLANK)
-      .join('')
-      .split(EMOJI_BLANK)
-      .join('');
+test('emoji fill uses only the fill and its background', () => {
+  const output = emojiLetters('L', '🔥');
+  const stripped = output.split('🔥').join('').split('\n').join('').split('🤍').join('');
 
-    expect(output).toContain(HEART);
-    expect(stripped).toBe('');
-  });
+  expect(output).toContain('🔥');
+  expect(output).toContain('🤍');
+  expect(stripped).toBe('');
+});
+
+test('light fill gets a dark background', () => {
+  const output = emojiLetters('L', '🤍');
+
+  expect(output).toContain('🖤');
+  expect(output).not.toContain('🤍🖤🤍');
+});
+
+test('emoji banner rows have equal grapheme count', () => {
+  const rows = emojiLettersBanner('HI', '⭐').split('\n');
+  const counts = rows.map(row => splitGraphemes(row).length);
+
+  expect(rows).toHaveLength(5);
+  counts.forEach(c => expect(c).toBe(counts[0]));
+});
+
+test('firstEmoji', () => {
+  expect(firstEmoji('ab🔥c')).toBe('🔥');
+  expect(firstEmoji('abc')).toBeUndefined();
+  expect(firstEmoji('❤')).toBe('❤️');
 });
 
 test('lowercase l renders fullwidth lowercase', () => {
@@ -66,8 +80,8 @@ test('unknown characters do not throw', () => {
 test('empty and whitespace-only input give empty string', () => {
   expect(bigLetters('')).toBe('');
   expect(bigLettersBanner('   ')).toBe('');
-  expect(heartLetters('')).toBe('');
-  expect(heartLettersBanner('')).toBe('');
+  expect(emojiLetters('')).toBe('');
+  expect(emojiLettersBanner('')).toBe('');
 });
 
 test('getAll includes the 4 letter art styles in category Art', () => {
@@ -82,7 +96,7 @@ test('getAll includes the 4 letter art styles in category Art', () => {
   expect(LETTER_ART_FONTS.map(f => f.name)).toEqual([
     'big_letters',
     'big_letters_banner',
-    'heart_letters',
-    'heart_letters_banner',
+    'emoji_letters',
+    'emoji_letters_banner',
   ]);
 });
