@@ -100,3 +100,14 @@ test('getAll includes the 4 letter art styles in category Art', () => {
     'emoji_letters_banner',
   ]);
 });
+
+test('banner wraps every 2 glyphs so rows fit a phone chat bubble', () => {
+  const lines = bigLettersBanner('LOVE').split('\n');
+
+  expect(lines).toHaveLength(11);
+  lines.forEach(line => expect(Array.from(line).length).toBeLessThanOrEqual(11));
+});
+
+test('banner starts a new band at each space', () => {
+  expect(bigLettersBanner('A B').split('\n')).toHaveLength(11);
+});

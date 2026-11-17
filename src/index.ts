@@ -220,6 +220,8 @@ export {
 
 export { FRAMES, frameText, Frame } from './frames';
 
+export { SHAPES, shapeText, ShapeId, ShapeMode } from './shapes';
+
 export const serif_normal = (s: string) => lookUp('serif_normal', s);
 
 export const serif_bold = (s: string) => lookUp('serif_bold', s);

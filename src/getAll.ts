@@ -2,6 +2,7 @@ import fonts from './fonts.json';
 import { lookUp } from './utils';
 import { LETTER_ART_FONTS } from './letterArt';
 import { FRAMES, frameText } from './frames';
+import { shapeText } from './shapes';
 
 export interface IFont {
   name: string;
@@ -33,6 +34,12 @@ export default function getAll(string: string): TFonts {
   result.push({
     name: 'frames',
     value: frameText(string, FRAMES[0].id),
+    category: 'Art',
+  });
+
+  result.push({
+    name: 'shapes',
+    value: shapeText(string, 'heart', 'inside'),
     category: 'Art',
   });
 

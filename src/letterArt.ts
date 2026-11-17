@@ -12,7 +12,6 @@ export const EMOJI_FILLS = ['❤️', '🔥', '⭐', '🌸', '💀', '✨', '�
 const LIGHT_FILLS = ['🤍', '⬜', '☁️', '🩶', '💀', '👻'];
 const HEART_EMOJI = '❤️';
 const GLYPH_SIZE = 5;
-const SPACE_WIDTH = 3;
 
 export const GLYPHS: Record<string, string[]> = {
   A: ['.###.', '#...#', '#####', '#...#', '#...#'],
@@ -239,25 +238,56 @@ export function stacked(s: string, fill: Fill): string {
   return lines.join('\n');
 }
 
+// @ AI Context: banners wrap into bands of BANNER_BAND_SIZE glyphs (11 cells wide). A 4-letter
+// band (22 cells) wrapped mid-row inside a WhatsApp bubble on phones and destroyed the shape
+// (reported 2026-11-17). A space also starts a new band so words stay whole.
+const BANNER_BAND_SIZE = 2;
+
 export function banner(s: string, fill: Fill): string {
   const gap = fill === 'self' ? BLANK : pickBackground(fill.emoji);
-  const tokens = tokenize(s);
+  const bands = toBands(tokenize(s));
 
-  if (tokens.length === 0) {
+  if (bands.length === 0) {
     return '';
   }
 
+  return bands.map(band => renderBand(band, fill, gap)).join('\n' + BLANK + '\n');
+}
+
+function toBands(tokens: Token[]): string[][] {
+  const bands: string[][] = [];
+  let current: string[] = [];
+
+  tokens.forEach(token => {
+    if (token.kind === 'space' || current.length === BANNER_BAND_SIZE) {
+      if (current.length > 0) {
+        bands.push(current);
+      }
+
+      current = [];
+    }
+
+    if (token.kind !== 'space') {
+      current.push(token.g);
+    }
+  });
+
+  if (current.length > 0) {
+    bands.push(current);
+  }
+
+  return bands;
+}
+
+function renderBand(graphemes: string[], fill: Fill, gap: string): string {
   const rows: string[][] = [];
 
   for (let i = 0; i < GLYPH_SIZE; i++) {
     rows.push([]);
   }
 
-  tokens.forEach((token, index) => {
-    const columns =
-      token.kind === 'space'
-        ? rows.map(() => new Array(SPACE_WIDTH).fill(gap))
-        : renderCells(token.g, fill);
+  graphemes.forEach((g, index) => {
+    const columns = renderCells(g, fill);
 
     rows.forEach((row, rowIndex) => {
       if (index > 0) {
