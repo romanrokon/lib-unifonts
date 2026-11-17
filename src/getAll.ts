@@ -1,5 +1,6 @@
 import fonts from './fonts.json';
 import { lookUp } from './utils';
+import { LETTER_ART_FONTS } from './letterArt';
 
 export interface IFont {
   name: string;
@@ -23,6 +24,10 @@ export default function getAll(string: string): TFonts {
 
     result.push({ name, value, category });
   }
+
+  LETTER_ART_FONTS.forEach(f =>
+    result.push({ name: f.name, value: f.fn(string), category: 'Art' })
+  );
 
   return result;
 }

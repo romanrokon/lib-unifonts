@@ -203,6 +203,16 @@ export const atbash_cipher = (s: string) => lookUp('atbash_cipher', s);
 
 export * from './decoder';
 
+export {
+  bigLetters,
+  bigLettersBanner,
+  heartLetters,
+  heartLettersBanner,
+  LETTER_ART_FONTS,
+  BLANK,
+  EMOJI_BLANK,
+} from './letterArt';
+
 export const serif_normal = (s: string) => lookUp('serif_normal', s);
 
 export const serif_bold = (s: string) => lookUp('serif_bold', s);
