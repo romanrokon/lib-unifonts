@@ -214,6 +214,7 @@ export {
   splitGraphemes,
   isEmoji,
   LETTER_ART_FONTS,
+  brailleLetters,
   BLANK,
   EMOJI_BLANK,
   EMOJI_BACKGROUNDS,

@@ -384,9 +384,79 @@ export const emojiLetters = (s: string, fill = '❤️') =>
 export const emojiLettersBanner = (s: string, fill = '❤️') =>
   banner(s, { emoji: fill });
 
+// @ AI Context: braille dot art (owner chose it 2026-11-25 over ASCII/fullwidth punctuation).
+// Braille cells are one fixed width in nearly every font, U+2800 blank included, so the art stays
+// aligned in proportional chat fonts where '.', '-' and spaces don't. Each glyph pixel becomes a
+// 2×2 block of dots (a braille cell is 2 dots wide, 4 tall), so a 5-row glyph is 10 dots, padded to
+// 3 lines. One pixel column = one cell, so a glyph is `width` cells plus a 1-cell gap. Bands wrap
+// at BRAILLE_BAND_CELLS (4 letters at 5×5, 6 at the slim 3×5) and at spaces. Graphemes with no
+// glyph (punctuation) are dropped: a stray '!' can't sit between dot rows.
+const BRAILLE_BASE = 0x2800;
+const BRAILLE_BLANK = String.fromCharCode(BRAILLE_BASE);
+const BRAILLE_BAND_CELLS = 23;
+const BRAILLE_ROWS = 3;
+// Dot bit for [dotRow][dotColumn] inside one cell.
+const BRAILLE_BITS = [
+  [0x01, 0x08],
+  [0x02, 0x10],
+  [0x04, 0x20],
+  [0x40, 0x80],
+];
+
+function brailleBand(keys: string[], glyphs: GlyphSet): string {
+  const pixelRows = glyphs.A.map((_, row) =>
+    keys.map(key => glyphs[key][row]).join('.')
+  );
+  const cells = pixelRows[0].length;
+  const lines: string[] = [];
+
+  for (let line = 0; line < BRAILLE_ROWS; line++) {
+    let text = '';
+
+    for (let cell = 0; cell < cells; cell++) {
+      let bits = 0;
+
+      for (let dotRow = 0; dotRow < 4; dotRow++) {
+        const pixelRow = pixelRows[Math.floor((line * 4 + dotRow) / 2)];
+
+        if (pixelRow && pixelRow[cell] === '#') {
+          bits |= BRAILLE_BITS[dotRow][0] | BRAILLE_BITS[dotRow][1];
+        }
+      }
+
+      text += String.fromCharCode(BRAILLE_BASE + bits);
+    }
+
+    const trimmed = text.replace(new RegExp(BRAILLE_BLANK + '+$'), '');
+
+    lines.push(trimmed === '' ? BRAILLE_BLANK : trimmed);
+  }
+
+  return lines.join('\n');
+}
+
+export function brailleLetters(s: string): string {
+  const tokens = tokenize(s).filter(
+    token => token.kind === 'space' || shapeFor(token.g).kind === 'glyph'
+  );
+  const glyphs = glyphsFor(tokens);
+  const size = Math.floor((BRAILLE_BAND_CELLS + 1) / (glyphs.A[0].length + 1));
+  const bands = toBands(tokens, size);
+
+  return bands
+    .map(band =>
+      brailleBand(
+        band.map(g => (shapeFor(g) as { key: string }).key),
+        glyphs
+      )
+    )
+    .join('\n' + BRAILLE_BLANK + '\n');
+}
+
 export const LETTER_ART_FONTS: { name: string; fn: (s: string) => string }[] = [
   { name: 'big_letters', fn: bigLetters },
   { name: 'big_letters_banner', fn: bigLettersBanner },
   { name: 'emoji_letters', fn: s => emojiLetters(s) },
   { name: 'emoji_letters_banner', fn: s => emojiLettersBanner(s) },
+  { name: 'braille_letters', fn: brailleLetters },
 ];

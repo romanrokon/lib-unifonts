@@ -98,6 +98,7 @@ test('getAll includes the 4 letter art styles in category Art', () => {
     'big_letters_banner',
     'emoji_letters',
     'emoji_letters_banner',
+    'braille_letters',
   ]);
 });
 
