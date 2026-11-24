@@ -3,6 +3,7 @@ import { lookUp } from './utils';
 import { LETTER_ART_FONTS } from './letterArt';
 import { FRAMES, frameText } from './frames';
 import { shapeText } from './shapes';
+import { upside_down } from './upsideDown';
 
 export interface IFont {
   name: string;
@@ -26,6 +27,8 @@ export default function getAll(string: string): TFonts {
 
     result.push({ name, value, category });
   }
+
+  result.push({ name: 'upside_down', value: upside_down(string), category: 'Funky' });
 
   LETTER_ART_FONTS.forEach(f =>
     result.push({ name: f.name, value: f.fn(string), category: 'Art' })

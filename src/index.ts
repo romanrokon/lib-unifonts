@@ -75,6 +75,10 @@ export const flipped = (s: string) => lookUp('flipped', s);
 
 export const flipped_reverse = (s: string) => lookUp('flipped_reverse', s);
 
+export const small_caps = (s: string) => lookUp('small_caps', s);
+
+export { upside_down } from './upsideDown';
+
 export const just_reversed = (s: string) => lookUp('atbash_cipher', s);
 
 export const superscript = (s: string) => lookUp('superscript', s);
