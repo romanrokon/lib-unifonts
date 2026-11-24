@@ -1,15 +1,17 @@
 // @ AI Context: every cell is a fullwidth char (charCode + 0xFEE0) or U+3000, so all cells have equal
 // width even in proportional fonts, and U+3000 is not collapsed as whitespace by Instagram/WhatsApp.
-// @ AI Context: emoji fills use a visible background from pickBackground (🤍, or 🖤 when the fill is light) because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
+// @ AI Context: emoji fills use a visible background from pickBackground because no invisible char matches emoji width; U+3000 blanks skewed heart rows on iPhone (2026-11-17). Only U+3000 blanks are trimmed so emoji art stays rectangular.
+// @ AI Context: background history: 🤍 (rejected, too loud) → ▫️ (white squares fought red hearts on dark, 2026-11-25) → ▪️, which nearly vanishes in dark-mode chats. Dark fills get ▫️ instead. The app dims EMOJI_BACKGROUNDS in its card preview.
 
 export const BLANK = '　';
-export const EMOJI_BLANK = '▫️';
+export const EMOJI_BLANK = '▪️';
+export const EMOJI_BACKGROUNDS = ['▪️', '▫️'];
 
 type Fill = 'self' | { emoji: string };
 
 export const EMOJI_FILLS = ['❤️', '🔥', '⭐', '🌸', '💀', '✨', '🍀', '💜'];
 
-const LIGHT_FILLS = ['▫️', '🤍', '⬜', '☁️', '🩶', '💀', '👻'];
+const DARK_FILLS = ['▪️', '🖤', '⬛', '◾', '🌑', '🐈‍⬛'];
 const HEART_EMOJI = '❤️';
 const GLYPH_SIZE = 5;
 
@@ -54,6 +56,67 @@ export const GLYPHS: Record<string, string[]> = {
   BLOB: ['.###.', '#####', '#####', '#####', '.###.'],
 };
 
+// @ AI Context: 3×5 glyphs used when the input has 3+ glyphs, so 3 letters fit the same 11-cell
+// band width that 2 letters take at 5×5. The 5×5-only stacked output for "ILOVE" was ~30 rows
+// tall in the card (reported 2026-11-25); choosing glyph size by length keeps it compact.
+export const SLIM_GLYPHS: Record<string, string[]> = {
+  A: ['.#.', '#.#', '###', '#.#', '#.#'],
+  B: ['##.', '#.#', '##.', '#.#', '##.'],
+  C: ['.##', '#..', '#..', '#..', '.##'],
+  D: ['##.', '#.#', '#.#', '#.#', '##.'],
+  E: ['###', '#..', '##.', '#..', '###'],
+  F: ['###', '#..', '##.', '#..', '#..'],
+  G: ['.##', '#..', '#.#', '#.#', '.##'],
+  H: ['#.#', '#.#', '###', '#.#', '#.#'],
+  I: ['###', '.#.', '.#.', '.#.', '###'],
+  J: ['..#', '..#', '..#', '#.#', '.#.'],
+  K: ['#.#', '#.#', '##.', '#.#', '#.#'],
+  L: ['#..', '#..', '#..', '#..', '###'],
+  M: ['#.#', '###', '###', '#.#', '#.#'],
+  N: ['##.', '#.#', '#.#', '#.#', '#.#'],
+  O: ['###', '#.#', '#.#', '#.#', '###'],
+  P: ['##.', '#.#', '##.', '#..', '#..'],
+  Q: ['.#.', '#.#', '#.#', '##.', '.##'],
+  R: ['##.', '#.#', '##.', '#.#', '#.#'],
+  S: ['.##', '#..', '.#.', '..#', '##.'],
+  T: ['###', '.#.', '.#.', '.#.', '.#.'],
+  U: ['#.#', '#.#', '#.#', '#.#', '###'],
+  V: ['#.#', '#.#', '#.#', '#.#', '.#.'],
+  W: ['#.#', '#.#', '###', '###', '#.#'],
+  X: ['#.#', '#.#', '.#.', '#.#', '#.#'],
+  Y: ['#.#', '#.#', '.#.', '.#.', '.#.'],
+  Z: ['###', '..#', '.#.', '#..', '###'],
+  '0': ['.#.', '#.#', '#.#', '#.#', '.#.'],
+  '1': ['.#.', '##.', '.#.', '.#.', '###'],
+  '2': ['##.', '..#', '.#.', '#..', '###'],
+  '3': ['##.', '..#', '.#.', '..#', '##.'],
+  '4': ['#.#', '#.#', '###', '..#', '..#'],
+  '5': ['###', '#..', '##.', '..#', '##.'],
+  '6': ['.##', '#..', '###', '#.#', '###'],
+  '7': ['###', '..#', '.#.', '.#.', '.#.'],
+  '8': ['###', '#.#', '###', '#.#', '###'],
+  '9': ['###', '#.#', '###', '..#', '##.'],
+  HEART: ['...', '#.#', '###', '###', '.#.'],
+  BLOB: ['.#.', '###', '###', '###', '.#.'],
+};
+
+const SLIM_FROM_GLYPH_COUNT = 3;
+const MAX_BAND_CELLS = 11;
+
+type GlyphSet = Record<string, string[]>;
+
+function glyphsFor(tokens: Token[]): GlyphSet {
+  const count = tokens.filter(token => token.kind === 'glyph').length;
+
+  return count >= SLIM_FROM_GLYPH_COUNT ? SLIM_GLYPHS : GLYPHS;
+}
+
+function bandSize(glyphs: GlyphSet): number {
+  const width = glyphs.A[0].length;
+
+  return Math.floor((MAX_BAND_CELLS + 1) / (width + 1));
+}
+
 const HEART_GRAPHEMES = [
   '❤️',
   '❤',
@@ -93,7 +156,7 @@ export function firstEmoji(s: string): string | undefined {
 }
 
 export function pickBackground(fill: string): string {
-  return LIGHT_FILLS.indexOf(fill) !== -1 ? '▪️' : EMOJI_BLANK;
+  return DARK_FILLS.indexOf(fill) !== -1 ? '▫️' : EMOJI_BLANK;
 }
 
 type Shape = { kind: 'glyph'; key: string } | { kind: 'space' } | { kind: 'other' };
@@ -148,14 +211,14 @@ function isBlankCell(cell: string): boolean {
   return cell === BLANK;
 }
 
-function renderCells(g: string, fill: Fill): string[][] {
+function renderCells(g: string, fill: Fill, glyphs: GlyphSet = GLYPHS): string[][] {
   const shape = shapeFor(g);
 
   if (shape.kind === 'glyph') {
     const cell = fillCell(g, fill);
     const blank = blankFor(cell, fill);
 
-    return GLYPHS[shape.key].map(row =>
+    return glyphs[shape.key].map(row =>
       row.split('').map(mark => (mark === '#' ? cell : blank))
     );
   }
@@ -212,9 +275,11 @@ function tokenize(s: string): Token[] {
 
 export function stacked(s: string, fill: Fill): string {
   const lines: string[] = [];
+  const tokens = tokenize(s);
+  const glyphs = glyphsFor(tokens);
   let extraSeparators = 0;
 
-  tokenize(s).forEach(token => {
+  tokens.forEach(token => {
     if (token.kind === 'space') {
       extraSeparators = 1;
 
@@ -228,7 +293,7 @@ export function stacked(s: string, fill: Fill): string {
     }
 
     extraSeparators = 0;
-    renderCells(token.g, fill).forEach(row => {
+    renderCells(token.g, fill, glyphs).forEach(row => {
       const trimmed = trimTrailingBlanks(row).join('');
 
       lines.push(trimmed === '' ? BLANK : trimmed);
@@ -238,28 +303,31 @@ export function stacked(s: string, fill: Fill): string {
   return lines.join('\n');
 }
 
-// @ AI Context: banners wrap into bands of BANNER_BAND_SIZE glyphs (11 cells wide). A 4-letter
-// band (22 cells) wrapped mid-row inside a WhatsApp bubble on phones and destroyed the shape
-// (reported 2026-11-17). A space also starts a new band so words stay whole.
-const BANNER_BAND_SIZE = 2;
+// @ AI Context: banners wrap into bands at most MAX_BAND_CELLS wide (2 glyphs at 5×5, 3 at 3×5).
+// A 4-letter band (22 cells) wrapped mid-row inside a WhatsApp bubble on phones and destroyed the
+// shape (reported 2026-11-17). A space also starts a new band so words stay whole.
 
 export function banner(s: string, fill: Fill): string {
   const gap = fill === 'self' ? BLANK : pickBackground(fill.emoji);
-  const bands = toBands(tokenize(s));
+  const tokens = tokenize(s);
+  const glyphs = glyphsFor(tokens);
+  const bands = toBands(tokens, bandSize(glyphs));
 
   if (bands.length === 0) {
     return '';
   }
 
-  return bands.map(band => renderBand(band, fill, gap)).join('\n' + BLANK + '\n');
+  return bands
+    .map(band => renderBand(band, fill, gap, glyphs))
+    .join('\n' + BLANK + '\n');
 }
 
-function toBands(tokens: Token[]): string[][] {
+function toBands(tokens: Token[], size: number): string[][] {
   const bands: string[][] = [];
   let current: string[] = [];
 
   tokens.forEach(token => {
-    if (token.kind === 'space' || current.length === BANNER_BAND_SIZE) {
+    if (token.kind === 'space' || current.length === size) {
       if (current.length > 0) {
         bands.push(current);
       }
@@ -279,7 +347,12 @@ function toBands(tokens: Token[]): string[][] {
   return bands;
 }
 
-function renderBand(graphemes: string[], fill: Fill, gap: string): string {
+function renderBand(
+  graphemes: string[],
+  fill: Fill,
+  gap: string,
+  glyphs: GlyphSet
+): string {
   const rows: string[][] = [];
 
   for (let i = 0; i < GLYPH_SIZE; i++) {
@@ -287,7 +360,7 @@ function renderBand(graphemes: string[], fill: Fill, gap: string): string {
   }
 
   graphemes.forEach((g, index) => {
-    const columns = renderCells(g, fill);
+    const columns = renderCells(g, fill, glyphs);
 
     rows.forEach((row, rowIndex) => {
       if (index > 0) {

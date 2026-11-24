@@ -24,7 +24,7 @@ test('L❤️VE stacks 4 glyphs with 3 separator lines and a heart block', () =>
 
   expect(lines).toHaveLength(4 * 5 + 3);
   expect(lines.filter(line => line === BLANK)).toHaveLength(3);
-  expect(lines[6]).toContain(HEART);
+  expect(lines[7]).toContain(HEART);
   expect(lines.join('')).toContain(HEART);
 });
 
@@ -38,18 +38,18 @@ test('banner LO has 5 rows with a BLANK gap between glyphs', () => {
 
 test('emoji fill uses only the fill and its background', () => {
   const output = emojiLetters('L', '🔥');
-  const stripped = output.split('🔥').join('').split('\n').join('').split('▫️').join('');
+  const stripped = output.split('🔥').join('').split('\n').join('').split('▪️').join('');
 
   expect(output).toContain('🔥');
-  expect(output).toContain('▫️');
+  expect(output).toContain('▪️');
   expect(stripped).toBe('');
 });
 
-test('light fill gets a dark background', () => {
-  const output = emojiLetters('L', '🤍');
+test('dark fill gets a light background', () => {
+  const output = emojiLetters('L', '🖤');
 
-  expect(output).toContain('▪️');
-  expect(output).not.toContain('▫️');
+  expect(output).toContain('▫️');
+  expect(output).not.toContain('▪️');
 });
 
 test('emoji banner rows have equal grapheme count', () => {
@@ -110,4 +110,16 @@ test('banner wraps every 2 glyphs so rows fit a phone chat bubble', () => {
 
 test('banner starts a new band at each space', () => {
   expect(bigLettersBanner('A B').split('\n')).toHaveLength(11);
+});
+
+test('3+ glyphs switch to 3-wide glyphs, 3 per band', () => {
+  const lines = bigLettersBanner('LOVE').split('\n');
+
+  expect(lines[0]).toBe('Ｌ' + BLANK.repeat(2) + BLANK + 'ＯＯＯ' + BLANK + 'Ｖ' + BLANK + 'Ｖ');
+  expect(lines[6]).toBe('ＥＥＥ');
+});
+
+test('1-2 glyphs keep 5x5', () => {
+  expect(bigLetters('L').split('\n')[4]).toBe('Ｌ'.repeat(5));
+  expect(bigLetters('LO').split('\n')[4]).toBe('Ｌ'.repeat(5));
 });

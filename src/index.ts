@@ -216,6 +216,7 @@ export {
   LETTER_ART_FONTS,
   BLANK,
   EMOJI_BLANK,
+  EMOJI_BACKGROUNDS,
 } from './letterArt';
 
 export { FRAMES, frameText, Frame } from './frames';
