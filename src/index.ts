@@ -78,6 +78,15 @@ export const flipped_reverse = (s: string) => lookUp('flipped_reverse', s);
 export const small_caps = (s: string) => lookUp('small_caps', s);
 
 export { upside_down } from './upsideDown';
+export {
+  mockingCase as mocking_case,
+  keycaps,
+  cherokeeAlike as cherokee_alike,
+  regionalLetters as regional_letters,
+  staircase,
+  speechBubble as speech_bubble,
+  binaryCode as binary_code,
+} from './playStyles';
 
 export const just_reversed = (s: string) => lookUp('atbash_cipher', s);
 
