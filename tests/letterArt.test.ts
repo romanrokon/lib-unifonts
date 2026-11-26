@@ -94,11 +94,11 @@ test('getAll includes the 4 letter art styles in category Art', () => {
     expect(found.category).toBe('Art');
   });
   expect(LETTER_ART_FONTS.map(f => f.name)).toEqual([
+    'braille_letters',
     'big_letters',
     'big_letters_banner',
     'emoji_letters',
     'emoji_letters_banner',
-    'braille_letters',
   ]);
 });
 

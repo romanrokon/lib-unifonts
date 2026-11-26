@@ -454,9 +454,9 @@ export function brailleLetters(s: string): string {
 }
 
 export const LETTER_ART_FONTS: { name: string; fn: (s: string) => string }[] = [
+  { name: 'braille_letters', fn: brailleLetters },
   { name: 'big_letters', fn: bigLetters },
   { name: 'big_letters_banner', fn: bigLettersBanner },
   { name: 'emoji_letters', fn: s => emojiLetters(s) },
   { name: 'emoji_letters_banner', fn: s => emojiLettersBanner(s) },
-  { name: 'braille_letters', fn: brailleLetters },
 ];

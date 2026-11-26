@@ -35,14 +35,14 @@ export default function getAll(string: string): TFonts {
   );
 
   result.push({
-    name: 'frames',
-    value: frameText(string, FRAMES[0].id),
+    name: 'shapes',
+    value: shapeText(string, 'heart', 'inside'),
     category: 'Art',
   });
 
   result.push({
-    name: 'shapes',
-    value: shapeText(string, 'heart', 'inside'),
+    name: 'frames',
+    value: frameText(string, FRAMES[0].id),
     category: 'Art',
   });
 
